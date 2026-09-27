@@ -21,14 +21,14 @@ func SetRoutes(svc *service.SchedulerService) http.Handler {
 
 	r.Get("/api/nextdate", h.GetNextDate)
 
-	r.With(auth).Get("/api/tasks", h.GetTasks)
+	r.With(h.auth).Get("/api/tasks", h.GetTasks)
 
-	r.With(auth).Post("/api/task", h.AddTask)
-	r.With(auth).Get("/api/task", h.GetTask)
-	r.With(auth).Put("/api/task", h.UpdateTask)
-	r.With(auth).Delete("/api/task", h.DeleteTask)
+	r.With(h.auth).Post("/api/task", h.AddTask)
+	r.With(h.auth).Get("/api/task", h.GetTask)
+	r.With(h.auth).Put("/api/task", h.UpdateTask)
+	r.With(h.auth).Delete("/api/task", h.DeleteTask)
 
-	r.With(auth).Post("/api/task/done", h.DoneTask)
+	r.With(h.auth).Post("/api/task/done", h.DoneTask)
 
 	r.Post("/api/signin", h.SignIn)
 

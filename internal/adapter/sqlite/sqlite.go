@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/sqlite3"
@@ -36,21 +37,25 @@ func migrationUp(db *sqlx.DB) error {
 	return nil
 }
 
-func New(ctx context.Context) (*Sqlite, error) {
-	_, err := os.Stat(os.Getenv("TODO_DBFile"))
+func New(ctx context.Context, dbFile string) (*Sqlite, error) {
+	if err := os.MkdirAll(filepath.Dir(dbFile), 0o755); err != nil {
+		return nil, fmt.Errorf("creating db directory: %w", err)
+	}
+
+	_, err := os.Stat(dbFile)
 	var isNotInstalled bool
 	if err != nil {
 		isNotInstalled = true
 	}
 
 	if isNotInstalled {
-		file, err := os.Create(os.Getenv("TODO_DBFile"))
+		file, err := os.Create(dbFile)
 		if err != nil {
 			return nil, fmt.Errorf("creating db file: %w", err)
 		}
 		defer file.Close()
 
-		db, err := sqlx.ConnectContext(ctx, "sqlite", os.Getenv("TODO_DBFile"))
+		db, err := sqlx.ConnectContext(ctx, "sqlite", dbFile)
 		if err != nil {
 			return nil, fmt.Errorf("connection to db: %w", err)
 		}
@@ -61,7 +66,7 @@ func New(ctx context.Context) (*Sqlite, error) {
 		return &Sqlite{db: db}, nil
 	}
 
-	db, err := sqlx.ConnectContext(ctx, "sqlite", os.Getenv("TODO_DBFile"))
+	db, err := sqlx.ConnectContext(ctx, "sqlite", dbFile)
 	if err != nil {
 		return nil, fmt.Errorf("connection to db: %w", err)
 	}

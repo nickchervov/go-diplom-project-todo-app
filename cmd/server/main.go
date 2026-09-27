@@ -11,33 +11,37 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/nickchervov/go-diplom-project/internal/adapter/sqlite"
+	"github.com/nickchervov/go-diplom-project/internal/config"
 	"github.com/nickchervov/go-diplom-project/internal/controller/handler"
 	"github.com/nickchervov/go-diplom-project/internal/service"
 	"github.com/nickchervov/go-diplom-project/pkg/httpserver"
 )
 
 func main() {
-	if err := godotenv.Load(".env"); err != nil {
+	_ = godotenv.Load(".env")
+
+	cfg, err := config.Load()
+	if err != nil {
 		log.Fatalf("loading config: %v", err)
 	}
 
-	if err := AppRun(context.Background()); err != nil {
+	if err := AppRun(context.Background(), cfg); err != nil {
 		log.Fatalf("running app: %v", err)
 	}
 }
 
-func AppRun(ctx context.Context) error {
-	repo, err := sqlite.New(ctx)
+func AppRun(ctx context.Context, cfg config.Config) error {
+	repo, err := sqlite.New(ctx, cfg.DBFile)
 	if err != nil {
 		return fmt.Errorf("open connection to db: %w", err)
 	}
 	defer repo.Close()
 
-	svc := service.New(repo)
+	svc := service.New(repo, cfg.Password)
 
 	router := handler.SetRoutes(svc)
 
-	server := httpserver.New(router)
+	server := httpserver.New(router, cfg.Port)
 
 	go func() {
 		log.Println("Starting server on port:", server.Server.Addr)

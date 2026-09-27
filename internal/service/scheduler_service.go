@@ -19,9 +19,10 @@ type AdapterInterface interface {
 }
 
 type SchedulerService struct {
-	repo AdapterInterface
+	repo     AdapterInterface
+	password string
 }
 
-func New(repo AdapterInterface) *SchedulerService {
-	return &SchedulerService{repo: repo}
+func New(repo AdapterInterface, pass string) *SchedulerService {
+	return &SchedulerService{repo: repo, password: pass}
 }
