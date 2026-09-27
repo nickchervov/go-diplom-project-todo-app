@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"os/signal"
 	"syscall"
 
@@ -18,7 +19,9 @@ import (
 
 func main() {
 	if err := godotenv.Load(".env"); err != nil {
-		log.Fatalf("loading config: %v", err)
+		os.Setenv("TODO_PORT", ":7540")
+		os.Setenv("TODO_DBFile", "./pkg/db/scheduler.db")
+		os.Setenv("TODO_PASSWORD", "123456")
 	}
 
 	if err := AppRun(context.Background()); err != nil {
