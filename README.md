@@ -66,18 +66,20 @@ go run ./cmd/server/main.go
 
 # Инструкция по запуску с помощью Docker
 
-Вместо слова PORT необходимо указать порт, который вы хотите использовать, он должен совпадать с портом в файле `.env`.
+Порт по умолчанию и путь к БД заданы в образе (`TODO_PORT=7540`, `TODO_DBFILE`), а миграции уже скопированы — монтировать том не нужно.
+
+`-e` задаёт переменные окружения внутри контейнера, `-p` публикует порт контейнера на хост. Это разные вещи: меняя порт через `-e TODO_PORT`, всё равно нужен `-p` с тем же портом, чтобы открыть сервис с хоста. Если `TODO_PASSWORD` не задан — авторизация выключена.
 
 1. **Из корня проекта (преварительно его необходимо скачать)**
 
 ```
 docker build -t todo-app:v1.0.0
-docker run -p PORT:PORT -e TODO_PASSWORD=PASSWORD -v ./pkg/db:/app/pkg/db todo-app:v1.0
+docker run -e TODO_PORT=7540 -e TODO_PASSWORD=<пароль> -p 7540:7540 todo-app:v1.0.0
 ```
 
 2. **Из docker hub**
 
 ```
 docker pull nickchervoff/go-diplom-project-todo-app:v1.0.0
-docker run -p PORT:PORT -e TODO_PASSWORD=PASSWORD -v ./pkg/db:/app/pkg/db nickchervoff/go-diplom-project-todo-app:v1.0.0
+docker run -e TODO_PORT=7540 -e TODO_PASSWORD=<пароль> -p 7540:7540 nickchervoff/go-diplom-project-todo-app:v1.0.0
 ```
