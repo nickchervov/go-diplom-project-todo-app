@@ -37,7 +37,7 @@
 
 Связь обработчиков с запросами http-сервера находится в файле `route.go`.
 
-Переменные окружения загружаются из файла `.env` с помощью сторонней библиотеки godotenv.
+Переменные окружения загружаются из файла `.env` с помощью сторонней библиотеки godotenv, а чтение и значения по умолчанию централизованы в пакете `internal/config`.
 
 # Инструкция по запуску локально
 
@@ -46,11 +46,11 @@
 Пример `.env` файла:
 
 ```
-# Using in file server.go
-TODO_PORT=PORT
-# Using in file sqlite.go
-TODO_DBFile=PATH DB FILE
-# Using in files service/sign_in.go and middlewares.go
+# Using in file config.go
+TODO_PORT=7540
+# Using in file config.go
+TODO_DBFILE=./pkg/db/scheduler.db
+# Using in file config.go
 TODO_PASSWORD=PASSWORD
 ```
 
@@ -60,9 +60,9 @@ TODO_PASSWORD=PASSWORD
 go run ./cmd/server/main.go
 ```
 
-Адрес в браузере (если TODO_PORT=:8080):
+Адрес в браузере (если TODO_PORT=7540):
 
-[http://localhost:8080](http://localhost:8080)
+[http://localhost:7540](http://localhost:7540)
 
 # Инструкция по запуску с помощью Docker
 
@@ -72,12 +72,12 @@ go run ./cmd/server/main.go
 
 ```
 docker build -t todo-app:v1.0.0
-docker run -p PORT:PORT -v ./pkg/db:/app/pkg/db todo-app:v1.0
+docker run -p PORT:PORT -e TODO_PASSWORD=PASSWORD -v ./pkg/db:/app/pkg/db todo-app:v1.0
 ```
 
 2. **Из docker hub**
 
 ```
 docker pull nickchervoff/go-diplom-project-todo-app:v1.0.0
-docker run -p PORT:PORT -v ./pkg/db:/app/pkg/db nickchervoff/go-diplom-project-todo-app:v1.0.0
+docker run -p PORT:PORT -e TODO_PASSWORD=PASSWORD -v ./pkg/db:/app/pkg/db nickchervoff/go-diplom-project-todo-app:v1.0.0
 ```

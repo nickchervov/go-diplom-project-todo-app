@@ -2,9 +2,9 @@ package httpserver
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"time"
 )
 
@@ -12,10 +12,11 @@ type Server struct {
 	Server *http.Server
 }
 
-func New(h http.Handler) *Server {
+func New(h http.Handler, port int) *Server {
+	addr := fmt.Sprintf(":%d", port)
 	return &Server{
 		Server: &http.Server{
-			Addr:    os.Getenv("TODO_PORT"),
+			Addr:    addr,
 			Handler: h,
 		},
 	}

@@ -1,0 +1,4 @@
+.git*
+.env
+*.exe
+pkg/db/*.db
