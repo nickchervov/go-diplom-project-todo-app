@@ -14,8 +14,6 @@ FROM alpine:latest
 
 WORKDIR /app
 
-RUN mkdir -p pkg/db
-
 COPY --from=builder ./build/pkg/migrations ./pkg/migrations
 
 COPY --from=builder ./todo-build ./todo-server

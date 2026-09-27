@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/sqlite3"
@@ -37,6 +38,10 @@ func migrationUp(db *sqlx.DB) error {
 }
 
 func New(ctx context.Context, dbFile string) (*Sqlite, error) {
+	if err := os.MkdirAll(filepath.Dir(dbFile), 0o755); err != nil {
+		return nil, fmt.Errorf("creating db directory: %w", err)
+	}
+
 	_, err := os.Stat(dbFile)
 	var isNotInstalled bool
 	if err != nil {
